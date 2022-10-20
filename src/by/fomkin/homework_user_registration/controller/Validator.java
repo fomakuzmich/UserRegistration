@@ -42,7 +42,7 @@ public class Validator {
 			message = "Uncorrectly input age";
 			return false;
 		}
-		Pattern password = Pattern.compile("[a-zA-Z0-9]{8,16}");
+		Pattern password = Pattern.compile("(?=.*\\d)(?=.*[A-Z])[a-zA-Z0-9]{8,16}");
 		match = password.matcher(request.getPassword());
 		if (!match.matches()) {
 			message = "Uncorrectly input password";
