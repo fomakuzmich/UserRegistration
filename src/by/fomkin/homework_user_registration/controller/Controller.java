@@ -1,39 +1,34 @@
 package by.fomkin.homework_user_registration.controller;
 
-import java.util.Scanner;
-
-import by.fomkin.homework_user_registration.bean.Request;
+import by.fomkin.homework_user_registration.bean.RegistrationInfo;
 import by.fomkin.homework_user_registration.bean.User;
+import by.fomkin.homework_user_registration.validator.ValidationResult;
 
 public class Controller {
-	private Scanner scan = new Scanner(System.in);
 
-	public User newUser() {
+	public void registration(RegistrationInfo newUserInfo) throws ServiceException {
 
-		System.out.println("Input username:");
-		String name = scan.next();
-		System.out.println("Input mail:");
-		String mail = scan.next();
-		System.out.println("Input age:");
-		String age = scan.next();
-		System.out.println("Input password:");
-		String password = scan.next();
-		System.out.println("Repeat password:");
-		String repeatPassword = scan.next();
+		ValidationResult.Validator validBuild = new ValidationResult.Validator();
 
-		Request request = new Request(name, mail, age, password, repeatPassword);
+		ValidationResult validationResult = validBuild.validName(newUserInfo).validMail(newUserInfo)
+				.validAge(newUserInfo).validPassword(newUserInfo).build();
 
-		if (!Validator.requestValidator(request)) {
-			System.out.println(Validator.message);
+		if (validationResult.isHaveErrors()) {
 
-			System.out.println("Repeat registration:");
-			return newUser();
+			throw new ServiceException(validationResult.getException());
+
 		} else {
-			System.out.println(Validator.message);
 
-			return new User(name, mail, password, Integer.parseInt(age));
-
+			newUser(newUserInfo);
 		}
+
+	}
+
+	public User newUser(RegistrationInfo newUserInfo) {
+
+		return new User(newUserInfo.getName(), newUserInfo.getMail(), newUserInfo.getPassword(),
+				Integer.parseInt(newUserInfo.getAge()));
+
 	}
 
 }
